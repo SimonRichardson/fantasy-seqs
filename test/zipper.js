@@ -63,7 +63,7 @@ exports.zipper = {
             );
         },
         [λ.arrayOf(λ.AnyVal)]
-    ),
+    )/*,
     'testing zipper right should return correct value': λ.check(
         function(a) {
             var seq = Seq.fromArray(a),
@@ -74,5 +74,40 @@ exports.zipper = {
             );
         },
         [λ.arrayOf(λ.AnyVal)]
-    )
+    ),
+    'testing zipper right multiple times should return correct value': λ.check(
+        function(a) {
+            var seq = Seq.fromArray(a),
+                zipper = Zipper.of(seq);
+            return equals(
+                chains(
+                    2,
+                    zipper.forwards(),
+                    function(a) {
+                        return a.forwards();
+                    }
+                ),
+                expected(a, 3, λ.forwards(λ.forwards(λ.forwards(Zipper.of(seq)))))
+            );
+        },
+        [λ.arrayOf(λ.AnyVal)]
+    ),
+    'test': function(test) {
+        var seq = Seq.fromArray([0, 1, 2, 3]);
+        var zipper = Zipper.of(seq);
+        console.log('\n--------');
+        console.log(seq.concat(Seq.fromArray([4, 5, 6, 7])));
+        console.log('\n--------');
+        console.log(zipper);
+        console.log(zipper.forwards().x);
+        console.log(zipper.forwards().x.forwards().x);
+        console.log(zipper.forwards().x.forwards().x.forwards().x);
+        console.log(zipper.forwards().x.forwards().x.forwards().x.forwards().x);
+        console.log(zipper.forwards().x.forwards().x.forwards().x.forwards().x.forwards().x);
+        console.log(zipper.forwards().x.forwards().x.forwards().x.forwards().x.backwards().x);
+        console.log(zipper.forwards().x.forwards().x.forwards().x.forwards().x.backwards().x.backwards().x);
+        console.log(zipper.forwards().x.forwards().x.forwards().x.forwards().x.backwards().x.backwards().x.backwards().x);
+        test.ok(true);
+        test.done();
+    }*/
 };

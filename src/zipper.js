@@ -1,6 +1,9 @@
 var daggy = require('daggy'),
+    combinators = require('fantasy-combinators'),
     Option = require('fantasy-options'),
     Seq = require('./seq'),
+
+    constant = combinators.constant,
 
     Zipper = daggy.tagged('x', 'y');
 
@@ -19,40 +22,32 @@ Zipper.prototype.concat = function(a) {
 
 // Common
 Zipper.prototype.backwards = function() {
-    var lhs = this.x,
-        rhs = this.y;
-    if (rhs.x.length < 1) return Option.None;
-    else return Option.of(
-        Zipper(
-            rhs.last().cata({
-                Some: function(a) {
-                    return Seq.of(a).concat(lhs);
-                },
-                None: function() {
-                    return lhs;
-                }
-            }),
-            rhs.init()
-        )
-    );
+    var scope = this;
+    return scope.y.cata({
+        Cons: function(a) {
+            return Option.of(
+                Zipper(
+                    scope.x.concat(Seq.Cons(a.slice(-1))),
+                    Seq.Cons(a.slice(0, a.length - 1))
+                )
+            );
+        },
+        Nil: constant(Option.None)
+    });
 };
 Zipper.prototype.forwards = function() {
-    var lhs = this.x,
-        rhs = this.y;
-    if (lhs.x.length < 1) return Option.None;
-    else return Option.of(
-        Zipper(
-            lhs.init(),
-            lhs.last().cata({
-                Some: function(a) {
-                    return Seq.of(a).concat(rhs);
-                },
-                None: function() {
-                    return lhs;
-                }
-            })
-        )
-    );
+    var scope = this;
+    return scope.x.cata({
+        Cons: function(a) {
+            return Option.of(
+                Zipper(
+                    Seq.Cons(a.slice(0, a.length - 1)),
+                    scope.y.concat(Seq.Cons(a.slice(-1)))
+                )
+            );
+        },
+        Nil: constant(Option.None)
+    });
 };
 Zipper.prototype.first = function() {
     return this.backwards().chain(function(x) {

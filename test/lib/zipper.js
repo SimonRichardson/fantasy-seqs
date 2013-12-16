@@ -4,21 +4,25 @@ var seqs = require('../../fantasy-seqs'),
     Zipper = seqs.Zipper;
 
 function backwards(a) {
-    throw new Error('???');
+    return a.y.cata({
+        Cons: function(x) {
+            var left = Seq.Cons(x.slice(1)),
+                right = Seq.Cons(x.slice(0, 1));
+            return Zipper(left, right);
+        },
+        Nil: Zipper.empty
+    });
 }
 
 function forwards(a) {
-    var lhs = a.x,
-        rhs = a.y;
-
-    if (lhs.x.length < 1) return Zipper.empty();
-    else return Zipper(
-        lhs.init(),
-        lhs.last().cata({
-            Some: Seq.of,
-            None: Seq.empty
-        })
-    );
+    return a.x.cata({
+        Cons: function(x) {
+            var left = Seq.Cons(x.slice(1)),
+                right = Seq.Cons(x.slice(0, 1));
+            return Zipper(left, right);
+        },
+        Nil: Zipper.empty
+    });
 }
 
 if (typeof module != 'undefined')
