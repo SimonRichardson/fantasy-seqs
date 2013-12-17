@@ -27,8 +27,8 @@ Zipper.prototype.backwards = function() {
         Cons: function(a) {
             return Option.of(
                 Zipper(
-                    scope.x.concat(Seq.Cons(a.slice(-1))),
-                    Seq.Cons(a.slice(0, a.length - 1))
+                    Seq.fromArray(a.slice(-1)).concat(scope.x),
+                    Seq.fromArray(a.slice(0, a.length - 1))
                 )
             );
         },
@@ -41,8 +41,8 @@ Zipper.prototype.forwards = function() {
         Cons: function(a) {
             return Option.of(
                 Zipper(
-                    Seq.Cons(a.slice(0, a.length - 1)),
-                    scope.y.concat(Seq.Cons(a.slice(-1)))
+                    Seq.fromArray(a.slice(1)),
+                    Seq.fromArray(a.slice(0, 1)).concat(scope.y)
                 )
             );
         },

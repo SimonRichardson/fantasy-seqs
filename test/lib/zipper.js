@@ -6,8 +6,8 @@ var seqs = require('../../fantasy-seqs'),
 function backwards(a) {
     return a.y.cata({
         Cons: function(x) {
-            var left = Seq.Cons(x.slice(1)),
-                right = Seq.Cons(x.slice(0, 1));
+            var left = a.x.concat(Seq.fromArray(x.slice(-1))),
+                right = Seq.fromArray(x.slice(0, x.length - 1));
             return Zipper(left, right);
         },
         Nil: Zipper.empty
@@ -17,8 +17,8 @@ function backwards(a) {
 function forwards(a) {
     return a.x.cata({
         Cons: function(x) {
-            var left = Seq.Cons(x.slice(1)),
-                right = Seq.Cons(x.slice(0, 1));
+            var left = Seq.fromArray(x.slice(1)),
+                right = Seq.fromArray(x.slice(0, 1)).concat(a.y);
             return Zipper(left, right);
         },
         Nil: Zipper.empty
