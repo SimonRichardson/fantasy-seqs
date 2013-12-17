@@ -3,6 +3,7 @@ var λ = require('./lib/test'),
     functor = require('fantasy-check/src/laws/functor'),
     monad = require('fantasy-check/src/laws/monad'),
     monoid = require('fantasy-check/src/laws/monoid'),
+    semigroup = require('fantasy-check/src/laws/semigroup'),
 
     helpers = require('fantasy-helpers'),
     combinators = require('fantasy-combinators'),
@@ -30,6 +31,9 @@ function run(a) {
         };
     return Identity.of(show(a));
 }
+function runT(a) {
+    return run(a.run.x);
+}
 
 exports.seq = {
     
@@ -56,6 +60,10 @@ exports.seq = {
     'leftIdentity (Monoid)': monoid.leftIdentity(λ)(Seq, run),
     'rightIdentity (Monoid)': monoid.rightIdentity(λ)(Seq, run),
     'associativity (Monoid)': monoid.associativity(λ)(Seq, run),
+
+    // Semigroup tests
+    'All (Semigroup)': semigroup.laws(λ)(Seq.of, run),
+    'associativity (Semigroup)': semigroup.associativity(λ)(Seq.of, run),
 
     // Manual tests
     'when using concat should concat in correct order': λ.check(
@@ -206,4 +214,35 @@ exports.seq = {
         },
         [λ.arrayOf(λ.AnyVal), λ.arrayOf(λ.AnyVal)]
     )
+};
+
+exports.seqT = {
+
+    // Applicative Functor tests
+    'All (Applicative)': applicative.laws(λ)(Seq.SeqT(Identity), runT),
+    'Identity (Applicative)': applicative.identity(λ)(Seq.SeqT(Identity), runT),
+    'Composition (Applicative)': applicative.composition(λ)(Seq.SeqT(Identity), runT),
+    'Homomorphism (Applicative)': applicative.homomorphism(λ)(Seq.SeqT(Identity), runT),
+    'Interchange (Applicative)': applicative.interchange(λ)(Seq.SeqT(Identity), runT),
+
+    // Functor tests
+    'All (Functor)': functor.laws(λ)(Seq.SeqT(Identity).of, runT),
+    'Identity (Functor)': functor.identity(λ)(Seq.SeqT(Identity).of, runT),
+    'Composition (Functor)': functor.composition(λ)(Seq.SeqT(Identity).of, runT),
+
+    // Monad tests
+    'All (Monad)': monad.laws(λ)(Seq.SeqT(Identity), runT),
+    'Left Identity (Monad)': monad.leftIdentity(λ)(Seq.SeqT(Identity), runT),
+    'Right Identity (Monad)': monad.rightIdentity(λ)(Seq.SeqT(Identity), runT),
+    'Associativity (Monad)': monad.associativity(λ)(Seq.SeqT(Identity), runT),
+
+    // Monoid tests
+    'All (Monoid)': monoid.laws(λ)(Seq.SeqT(Identity), runT),
+    'leftIdentity (Monoid)': monoid.leftIdentity(λ)(Seq.SeqT(Identity), runT),
+    'rightIdentity (Monoid)': monoid.rightIdentity(λ)(Seq.SeqT(Identity), runT),
+    'associativity (Monoid)': monoid.associativity(λ)(Seq.SeqT(Identity), runT),
+
+    // Semigroup tests
+    'All (Semigroup)': semigroup.laws(λ)(Seq.SeqT(Identity).of, runT),
+    'associativity (Semigroup)': semigroup.associativity(λ)(Seq.SeqT(Identity).of, runT)
 };

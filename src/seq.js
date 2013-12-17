@@ -8,7 +8,7 @@ var daggy = require('daggy'),
 
     Tuple2 = tuples.Tuple2,
     Seq = daggy.taggedSum({
-        Cons: ['x'],
+        Cons: ['cons'],
         Nil: []
     });
 
@@ -173,6 +173,57 @@ Seq.from = function(a, b) {
 };
 Seq.fromArray = function(a) {
     return a.length < 1 ? Seq.Nil : Seq.Cons(a);
+};
+
+// Transformer
+Seq.SeqT = function(M) {
+    var SeqT = daggy.tagged('run'),
+        sequence = function(x) {
+            return x.fold(M.of(Seq.empty()), function(a, b) {
+                return a.chain(function(x) {
+                    return b.chain(function(y) {
+                        return M.of(x.concat(y));
+                    });
+                });
+            });
+        };
+    SeqT.of = function(x) {
+        return SeqT(M.of(Seq.of(x)));
+    };
+    SeqT.empty = function() {
+        return SeqT(M.of(Seq.empty()));
+    };
+    SeqT.prototype.fold = function(a, b) {
+        return this.run.chain(function(o) {
+            return M.of(o.fold(a, b));
+        });
+    };
+    SeqT.prototype.chain = function(f) {
+        var m = this.run;
+        return SeqT(m.chain(function(o) {
+            return sequence(
+                o.fold(Seq.empty(), function(a, b) {
+                    return a.concat(Seq.of(f(b).run));
+                })
+            );
+        }));
+    };
+    SeqT.prototype.concat = function(x) {
+        return SeqT(sequence(
+            Seq.of(this.run).concat(Seq.of(x.run))
+        ));
+    };
+    SeqT.prototype.map = function(f) {
+        return this.chain(function(a) {
+            return SeqT.of(f(a));
+        });
+    };
+    SeqT.prototype.ap = function(a) {
+        return this.chain(function(f) {
+            return a.map(f);
+        });
+    };
+    return SeqT;
 };
 
 // Export
