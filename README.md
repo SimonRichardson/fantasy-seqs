@@ -1,6 +1,6 @@
 # Fantasy Seq
 
-This library implements purely functional, monadic homogenous list 
+This library implements purely functional, monadic homogenous array 
 data structure.
 
 ```javavscript

@@ -1,7 +1,7 @@
 {
   "name": "fantasy-seqs",
-  "version": "0.0.1",
-  "description": "Identity data structure.",
+  "version": "0.0.2",
+  "description": "Homogenous array sequence data structure.",
   "repository": {
     "type": "git",
     "url": "git://github.com/SimonRichardson/fantasy-seqs.git"
@@ -9,6 +9,7 @@
   "keywords": [
     "fantasyland",
     "list",
+    "array",
     "monad"
   ],
   "author": "Simon Richardson",
