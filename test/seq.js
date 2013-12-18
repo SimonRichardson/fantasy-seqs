@@ -244,5 +244,79 @@ exports.seqT = {
 
     // Semigroup tests
     'All (Semigroup)': semigroup.laws(λ)(Seq.SeqT(Identity).of, runT),
-    'associativity (Semigroup)': semigroup.associativity(λ)(Seq.SeqT(Identity).of, runT)
+    'associativity (Semigroup)': semigroup.associativity(λ)(Seq.SeqT(Identity).of, runT),
+
+    // Manual tests
+    'when testing reverse should return correct seqT': λ.check(
+        function(a) {
+            var SeqT = Seq.SeqT(Identity),
+                x = SeqT.fromArray(a).reverse(),
+                y = SeqT.fromArray(a.slice().reverse());
+            return λ.equals(x, y, function(a) {
+                return function(b) {
+                    return λ.arrayEquals(a, b);
+                };
+            });
+        },
+        [λ.arrayOf(λ.AnyVal)]
+    ),
+    'when testing filter should return correct seqT': λ.check(
+        function(a) {
+            var SeqT = Seq.SeqT(Identity),
+                x = SeqT.fromArray(a).filter(isEven),
+                y = SeqT.fromSeq(Seq.fromArray(a).filter(isEven));
+            return λ.equals(x, y, function(a) {
+                return function(b) {
+                    return λ.arrayEquals(a, b);
+                };
+            });
+        },
+        [λ.arrayOf(λ.AnyVal)]
+    ),
+    'when testing partition should return correct seqT': λ.check(
+        function(a) {
+            var SeqT = Seq.SeqT(Identity),
+                x = SeqT.fromArray(a).partition(isEven),
+                y = SeqT.fromSeq(Seq.fromArray(a).partition(isEven));
+            return λ.equals(x.run.x._1, y.run.x._1, function(a) {
+                    return function(b) {
+                        return λ.arrayEquals(a, b);
+                    };
+                }) && λ.equals(x.run.x._2, y.run.x._2, function(a) {
+                    return function(b) {
+                        return λ.arrayEquals(a, b);
+                    };
+                });
+        },
+        [λ.arrayOf(λ.AnyVal)]
+    ),
+    'when testing take should return correct seqT': λ.check(
+        function(a) {
+            var SeqT = Seq.SeqT(Identity),
+                rnd = randomRange(0, a.length),
+                x = SeqT.fromArray(a).take(rnd),
+                y = SeqT.fromSeq(Seq.fromArray(a).take(rnd));
+            return λ.equals(x, y, function(a) {
+                return function(b) {
+                    return λ.arrayEquals(a, b);
+                };
+            });
+        },
+        [λ.arrayOf(λ.AnyVal)]
+    ),
+    'when testing zip should return correct seqT': λ.check(
+        function(a, b) {
+            var SeqT = Seq.SeqT(Identity),
+                x = SeqT.fromArray(a),
+                y = SeqT.fromArray(b),
+                z = x.zip(y),
+                zz = SeqT.fromSeq(Seq.fromArray(a).zip(Seq.fromArray(b)));
+            return λ.equals(z, zz, function(a) {
+                return function(b) {
+                    return λ.arrayEquals(a, b);
+                };
+            });
+        },
+        [λ.arrayOf(λ.AnyVal), λ.arrayOf(λ.AnyVal)]
+    )
 };

@@ -223,6 +223,50 @@ Seq.SeqT = function(M) {
             return a.map(f);
         });
     };
+    SeqT.prototype.reverse = function() {
+        var m = this.run;
+        return SeqT(m.map(function(x){
+            return x.reverse();
+        }));
+    };
+
+    // Common
+    SeqT.prototype.filter = function(f) {
+        var m = this.run;
+        return SeqT(m.map(function(x) {
+            return x.filter(f);
+        }));
+    };
+    SeqT.prototype.partition = function(f) {
+        var m = this.run;
+        return SeqT(m.map(function(x) {
+            return x.partition(f);
+        }));
+    };
+    SeqT.prototype.take = function(n) {
+        var m = this.run;
+        return SeqT(m.map(function(x) {
+            return x.take(n);
+        }));
+    };
+    SeqT.prototype.zip = function(x) {
+        var m = this.run,
+            n = x.run;
+        return SeqT(m.chain(function(x) {
+            return n.map(function(y) {
+                return x.zip(y);
+            });
+        }));
+    };
+
+    // IO
+    SeqT.fromSeq = function(x) {
+        return SeqT(M.of(x));
+    };
+    SeqT.fromArray = function(x) {
+        return SeqT(M.of(Seq.fromArray(x)));
+    };
+
     return SeqT;
 };
 
