@@ -174,6 +174,12 @@ Seq.from = function(a, b) {
 Seq.fromArray = function(a) {
     return a.length < 1 ? Seq.Nil : Seq.Cons(a);
 };
+Seq.prototype.toArray = function() {
+    return this.cata({
+        Cons: identity,
+        Nil: constant([])
+    });
+};
 
 // Transformer
 Seq.SeqT = function(M) {

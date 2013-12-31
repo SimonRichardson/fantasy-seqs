@@ -213,6 +213,13 @@ exports.seq = {
             });
         },
         [λ.arrayOf(λ.AnyVal), λ.arrayOf(λ.AnyVal)]
+    ),
+    'when testing toArray should return correct array': λ.check(
+        function(a) {
+            var x = Seq.fromArray(a);
+            return λ.arrayEquals(x.toArray(), a);
+        },
+        [λ.arrayOf(λ.AnyVal)]
     )
 };
 

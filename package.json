@@ -1,6 +1,6 @@
 {
   "name": "fantasy-seqs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Homogenous array sequence data structure.",
   "repository": {
     "type": "git",
