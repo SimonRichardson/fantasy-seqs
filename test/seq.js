@@ -147,6 +147,23 @@ exports.seq = {
         },
         [λ.arrayOf(Number)]
     ),
+    'when testing find should return correct seq': λ.check(
+        function(a) {
+            var x = Seq.fromArray(a),
+                y = x.find(function(b) {
+                    return a[0] === b;
+                });
+            return y.cata({
+                Some: function(x) {
+                    return x === a[0];
+                },
+                None: function() {
+                    return a.length < 1;
+                }
+            });
+        },
+        [λ.arrayOf(Number)]
+    ),
     'when testing init should return correct seq': λ.check(
         function(a) {
             var x = Seq.fromArray(a),

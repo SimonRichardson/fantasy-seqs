@@ -88,6 +88,22 @@ Seq.prototype.filter = function(f) {
         Nil: Seq.empty
     });
 };
+Seq.prototype.find = function(f) {
+    return this.cata({
+        Cons: function(x) {
+            var i;
+            for(i = 0; i < x.length; i++) {
+                if (f(x[i])) {
+                    return Option.of(x[i]);
+                }
+            }
+            return Option.None;
+        },
+        Nil: function() {
+            return Option.None;
+        }
+    });
+};
 Seq.prototype.first = function() {
     return this.cata({
         Cons: function(x) {
