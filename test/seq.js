@@ -21,6 +21,9 @@ var λ = require('./lib/test'),
 function isEven(a) {
     return (a % 2) === 0;
 }
+function sum(a, b) {
+    return a + b;
+}
 
 function run(a) {
     var concat = function(a, b) {
@@ -206,6 +209,15 @@ exports.seq = {
                     λ.equals(y._2, Seq.fromArray(z._2));
         },
         [λ.arrayOf(Number)]
+    ),
+    'when testing reduce should return correct seq': λ.check(
+        function(a) {
+            var x = Seq.fromArray(a),
+                y = x.reduce(sum),
+                z = λ.reduce(a, sum);
+            return y === z;
+        },
+        [λ.arrayOf(λ.AnyVal)]
     ),
     'when testing take should return correct seq': λ.check(
         function(a) {

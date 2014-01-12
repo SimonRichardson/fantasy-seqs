@@ -149,6 +149,20 @@ Seq.prototype.partition = function(f) {
         }
     });
 };
+Seq.prototype.reduce = function(f) {
+    // TODO (Simon) : Trampoline this!
+    var rec = function(a, index, b) {
+        if (index < a.length) {
+            return rec(a, index + 1, f(b, a[index]));
+        } else return b;
+    };
+    return this.cata({
+        Cons: function(x) {
+            return rec(x, 1, x[0]);
+        },
+        Nil: constant(null)
+    });
+};
 Seq.prototype.take = function(x) {
     var env = this;
     return this.cata({

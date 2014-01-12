@@ -52,6 +52,15 @@ function fold(a, v, f) {
     return v;
 }
 
+function reduce(a, f) {
+    var v = a.length < 1 ? null : a[0],
+        i;
+    for(i = 1; i < a.length; i++) {
+        v = f(v, a[i]);
+    }
+    return v;
+}
+
 function equals(a, b) {
     return fold(zip(a, b), true, function(a, b) {
         return a && b._1 === b._2;
@@ -67,5 +76,6 @@ if (typeof module != 'undefined')
         partition: partition,
         zip: zip,
         fold: fold,
+        reduce: reduce,
         arrayEquals: equals
     };
